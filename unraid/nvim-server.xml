@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<Container version="2">
+  <Name>nvim-server</Name>
+  <Repository>ghcr.io/sewsam/nvim-server:latest</Repository>
+  <Registry>https://github.com/sewsam/nvim-server/pkgs/container/nvim-server</Registry>
+  <Network>bridge</Network>
+  <MyIP/>
+  <Shell>bash</Shell>
+  <Privileged>false</Privileged>
+  <Support>https://github.com/sewsam/nvim-server/issues</Support>
+  <Project>https://github.com/sewsam/nvim-server</Project>
+  <Overview>Self-contained web Neovim. Runs a single Neovim instance (AstroNvim config) inside the container and serves it to your browser on one port. Mount your git-managed Neovim config at /config/nvim and a persistent data volume at /data for plugins and LSP tools. No external services required. Put a reverse proxy in front for auth/TLS.</Overview>
+  <Category>Productivity: Tools:</Category>
+  <WebUI>http://[IP]:[PORT:9998]/</WebUI>
+  <Icon>https://raw.githubusercontent.com/sewsam/nvim-server/main/server/static/neovim.svg</Icon>
+  <ExtraParams/>
+  <PostArgs/>
+  <DonateText/>
+  <DonateLink/>
+  <Description>Self-contained web Neovim (AstroNvim) in a single container. Configurable web port and volumes; manage the config volume with git yourself.</Description>
+
+  <Config Name="WebUI Port" Target="9998" Default="9998" Mode="tcp" Description="Host port for the Neovim web UI." Type="Port" Display="always" Required="true" Mask="false">9998</Config>
+
+  <Config Name="Neovim Config" Target="/config/nvim" Default="/mnt/user/appdata/nvim-server/config/nvim" Mode="rw" Description="Your Neovim config directory (e.g. your dotfiles' nvim/.config/nvim). Manage git here yourself." Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/nvim-server/config/nvim</Config>
+
+  <Config Name="Data" Target="/data" Default="/mnt/user/appdata/nvim-server/data" Mode="rw" Description="Persistent data: plugins, Mason LSP/tools, treesitter parsers, state. Survives restarts." Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/nvim-server/data</Config>
+
+  <Config Name="WEB_PORT" Target="WEB_PORT" Default="9998" Mode="" Description="Port the web server binds inside the container. Match this to the container side of the WebUI Port mapping." Type="Variable" Display="advanced" Required="false" Mask="false">9998</Config>
+</Container>

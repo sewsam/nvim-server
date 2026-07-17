@@ -9,7 +9,9 @@ client.setupKeyboardHandlers();
 globalThis.addEventListener("load", () => {
     client.connect();
 
-    const serverAddress = getUrlParameter("server");
+    // Auto-connect to the co-located Neovim by default so the app is zero-click.
+    // A ?server= query param overrides the built-in default when set.
+    const serverAddress = getUrlParameter("server") || "127.0.0.1:6666";
     if (serverAddress && isValidServerAddress(serverAddress)) {
         const connectionForm = document.getElementById("connection-form");
         if (connectionForm) {

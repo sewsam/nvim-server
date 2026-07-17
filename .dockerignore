@@ -1,0 +1,20 @@
+# VCS / CI
+.git
+.github
+
+# Built artifacts (the image compiles from source)
+dist/
+nvim-server
+*.exe
+*.test
+*.out
+coverage.*
+
+# Docs and local files not needed in the build context
+*.md
+LICENSE
+.env
+.gitignore
+.dockerignore
+Dockerfile
+unraid/
