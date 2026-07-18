@@ -1,4 +1,7 @@
 disclaimer: meta vibe slop; vibe-coded fork of a vibe-coded project.
+- AstroNvim flavored
+- Prepared docker image and published via ghcr.io
+- JetBrains Mono Nerdfont
 --
 # Neovim in the Browser
 
