@@ -9,6 +9,14 @@ client.setupKeyboardHandlers();
 globalThis.addEventListener("load", () => {
     client.connect();
 
+    // Make sure the bundled Nerd Font is loaded before the canvas paints icon
+    // glyphs; once ready, force a redraw so the first frame isn't a fallback font.
+    if (globalThis.document && document.fonts && document.fonts.load) {
+        document.fonts.load('14px "JetBrainsMono Nerd Font"').then(() => {
+            if (client.renderer) client.renderer.redraw();
+        }).catch(() => {});
+    }
+
     // Auto-connect to the co-located Neovim by default so the app is zero-click.
     // A ?server= query param overrides the built-in default when set.
     const serverAddress = getUrlParameter("server") || "127.0.0.1:6666";

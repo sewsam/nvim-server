@@ -2,7 +2,7 @@ class NeovimRenderer {
     constructor(canvas) {
         this.canvas = canvas;
         this.ctx = canvas.getContext("2d");
-        this.fontFamily = "monospace";
+        this.fontFamily = "'JetBrainsMono Nerd Font', monospace";
         this.fontSize = 14;
         this.cellWidth = 12;
         this.cellHeight = 20;
@@ -35,8 +35,12 @@ class NeovimRenderer {
         this.cellWidth = Math.round(this.fontSize * 0.6);
         this.cellHeight = Math.ceil(this.fontSize * 1.2);
 
-        const currentWidth = this.canvas.width || this.canvas.offsetWidth;
-        const currentHeight = this.canvas.height || this.canvas.offsetHeight;
+        // this.canvas.width is in device pixels (CSS px * devicePixelRatio).
+        // Divide it back out so cols/rows are computed from CSS pixels; otherwise
+        // on HiDPI displays (dpr=2) the grid doubles and the UI renders off-center.
+        const dpr = globalThis.devicePixelRatio || 1;
+        const currentWidth = (this.canvas.width / dpr) || this.canvas.offsetWidth;
+        const currentHeight = (this.canvas.height / dpr) || this.canvas.offsetHeight;
 
         this.cols = Math.floor(currentWidth / this.cellWidth);
         this.rows = Math.floor(currentHeight / this.cellHeight);
@@ -61,7 +65,10 @@ class NeovimRenderer {
                 this.fontSize = newFontSize;
             }
 
-            this.fontFamily = `${fontFamily},monospace`;
+            // Render in the bundled JetBrainsMono Nerd Font first so text matches
+            // the local terminal setup and icon glyphs always resolve; the config's
+            // guifont families remain as fallbacks after it.
+            this.fontFamily = `'JetBrainsMono Nerd Font', ${fontFamily}, monospace`;
         }
 
         this.updateFont();
