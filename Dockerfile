@@ -19,7 +19,9 @@ RUN CGO_ENABLED=0 go build -ldflags "-X main.version=${VERSION}" -o /out/nvim-se
 ########################################
 # Runtime stage: Neovim + toolchain    #
 ########################################
-FROM debian:bookworm-slim AS runtime
+# trixie (not bookworm): its glibc 2.41 satisfies the prebuilt tree-sitter CLI
+# (needs GLIBC_2.39), so nvim-treesitter can compile parsers.
+FROM debian:trixie-slim AS runtime
 
 # Neovim release to install (debian's own package is far too old for AstroNvim v6).
 # "stable" always resolves to the latest stable release; pin to a vX.Y.Z tag for
@@ -41,13 +43,20 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     # debian ships fd as "fdfind" and bat as "batcat"; expose the expected names.
     && ln -sf "$(command -v fdfind)" /usr/local/bin/fd
 
-# Install Neovim from the official linux x86_64 release tarball into /opt.
-RUN curl -fL "https://github.com/neovim/neovim/releases/download/${NVIM_VERSION}/nvim-linux-x86_64.tar.gz" \
-        -o /tmp/nvim.tar.gz \
-    && tar -xzf /tmp/nvim.tar.gz -C /opt \
-    && ln -sf /opt/nvim-linux-x86_64/bin/nvim /usr/local/bin/nvim \
-    && rm /tmp/nvim.tar.gz \
-    && nvim --version
+# Install Neovim from the official linux release tarball into /opt, picking the
+# asset that matches the image architecture (amd64 -> x86_64, arm64 -> arm64).
+RUN set -eux; \
+    case "$(dpkg --print-architecture)" in \
+        amd64) NVIM_ARCH=x86_64 ;; \
+        arm64) NVIM_ARCH=arm64 ;; \
+        *) echo "unsupported architecture: $(dpkg --print-architecture)" >&2; exit 1 ;; \
+    esac; \
+    curl -fL "https://github.com/neovim/neovim/releases/download/${NVIM_VERSION}/nvim-linux-${NVIM_ARCH}.tar.gz" \
+        -o /tmp/nvim.tar.gz; \
+    tar -xzf /tmp/nvim.tar.gz -C /opt; \
+    ln -sf "/opt/nvim-linux-${NVIM_ARCH}/bin/nvim" /usr/local/bin/nvim; \
+    rm /tmp/nvim.tar.gz; \
+    nvim --version
 
 # XDG layout: config is a user-managed volume; data/state/cache persist plugins,
 # Mason tools, treesitter parsers and shada across restarts.
