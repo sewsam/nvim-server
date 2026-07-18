@@ -1,3 +1,5 @@
+disclaimer: meta vibe slop; vibe-coded fork of a vibe-coded project.
+--
 # Neovim in the Browser
 
 <img width="1960" height="1120" alt="Screenshot from 2025-08-30 20-58-16" src="https://github.com/user-attachments/assets/a84ab3c0-176b-4b3d-a413-5586fde4c7e3" />
