@@ -58,6 +58,10 @@ jobs:
           context: .
           platforms: linux/amd64
           push: true
+          # Skip provenance/SBOM attestations: they add an extra manifest that the
+          # GHCR UI lists as a bogus "unknown/unknown" platform.
+          provenance: false
+          sbom: false
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
